@@ -1,38 +1,48 @@
 import sqlite3
-import vcfpy
-import re
 
 
-connection = sqlite3.connect("chat.db")
+def getContacts():
+    file = open('/Users/tylerdonati/Desktop/MsgAnalyzer/contacts.vcf', 'r')
 
-crsr = connection.cursor()
+    contacts = {}
 
-crsr.execute("SELECT text FROM message;")
+    name = ""
+    for line in file:
+        if line[0:2] == "FN":
+            #print(line[3:])
+            name = line[3:].rstrip()
+        if line[0:3] == "TEL":
+            #print(line[line.index('pref:')+5:])
+            contacts[(name, line[line.index('pref:')+5:].rstrip())] = []
 
-ans = crsr.fetchall()
-
-# for i in ans:
-#     i = str(i)
-#     currMsg = i[2:-3]
-#     if ''.join(currMsg.split()) != "":
-#         print(currMsg)
-#         print("\n")
-#     #print(i)
+    print(contacts)
+    return contacts
 
 
-# reader = vcfpy.Reader.from_path('/Users/tylerdonati/Desktop/fun project/Martin Leung and 26 others.vcf')
-# print(reader.header.names)
-#
-# for record in reader:
-#     if not record.is_snv():
-#         continue
-#     line = [record.FN, record.VOICE]
-#     print('\t'.join(map(str, line)))
+def messages(contacts):
+    connection = sqlite3.connect("chat.db")
 
-file = open('/Users/tylerdonati/Desktop/fun project/Martin Leung and 26 others.vcf', 'r')
+    crsr = connection.cursor()
 
-for line in file:
-    if line[0:2] == "FN":
-        print(line)
-    if line[0:3] == "TEL":
-        print(line[line.index('pref:')+5:])
+    crsr.execute("SELECT text FROM message;")
+
+    ans = crsr.fetchall()
+
+
+    for i in ans:
+        i = str(i)
+        currMsg = i[2:-3]
+        if ''.join(currMsg.split()) != "":
+            print(currMsg)
+            #print("\n")
+
+        #print(i)
+
+
+def main():
+    contacts = getContacts()
+    messages(contacts)
+
+
+if __name__ == '__main__':
+    main()
