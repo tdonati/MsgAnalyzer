@@ -1,0 +1,1 @@
+export GOOGLE_APPLICATION_CREDENTIALS=/Users/tylerdonati/Desktop/MsgAnalyzer/apikey.json
